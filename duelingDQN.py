@@ -59,6 +59,8 @@ avg_regret = sum(regrets)/num_runs
 print(f"Average regret : {avg_regret:.4f}")
 print(f"Average regret per episode: {avg_regret/total_episodes:.4f}")
 
+np.savetxt(env_name+'_'+hyperparameters["dueling_type"]+'.csv', soft_return, delimiter=',')
+
 mean_data = np.mean(soft_return, axis=0)
 variance_data = np.var(soft_return, axis=0)
 shade_data_1ow = mean_data - np.sqrt(variance_data)
