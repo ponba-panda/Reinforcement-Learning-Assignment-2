@@ -14,7 +14,7 @@ from torch.distributions import Categorical
 from torch.autograd import Variable
 
 import sys
-import pandas as pd
+# import pandas as pd
 import matplotlib.pyplot as plt
 from collections import deque
 import random
@@ -59,7 +59,7 @@ avg_regret = sum(regrets)/num_runs
 print(f"Average regret : {avg_regret:.4f}")
 print(f"Average regret per episode: {avg_regret/total_episodes:.4f}")
 
-np.savetxt(env_name+'_'+hyperparameters["dueling_type"]+'.csv', soft_return, delimiter=',')
+# np.savetxt(env_name+'_'+hyperparameters["dueling_type"]+'.csv', soft_return, delimiter=',')
 
 mean_data = np.mean(soft_return, axis=0)
 variance_data = np.var(soft_return, axis=0)
@@ -73,5 +73,5 @@ plt.plot()
 plt.xlabel('Episode')
 plt.ylabel('Return')
 plt.title(f'Dueling DQN {hyperparameters["dueling_type"]} - Returns per Episode')
-plt.savefig(env_name+'_'+hyperparameters["dueling_type"]+'.pdf')
-#plt.show()
+# plt.savefig(env_name+'_'+hyperparameters["dueling_type"]+'.pdf')
+plt.show()
