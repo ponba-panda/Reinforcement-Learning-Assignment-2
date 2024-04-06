@@ -196,7 +196,20 @@ class DDQNagent:
         # rewards = []
         # avg_rewards = []
         returns = []
-        avg_returns = [-100]
+
+        env_name = self.env.unwrapped.spec.id
+
+        if env_name == "CartPole-v1":
+          best_return = 99.34
+          avg_return_start = 0
+        elif env_name == "Acrobot-v1":
+          best_return = -45
+          avg_return_start = -99.34
+        else:
+          print("Wrong environment name!")
+          return
+
+        avg_returns = [avg_return_start]
         episode = 0
         avg_return = 0
         steps = []
@@ -224,25 +237,29 @@ class DDQNagent:
                     # avg_rewards.append(np.mean(rewards[-10:]))
                     # sys.stdout.write("episode: {}, reward: {}, average _reward: {} \n".format(episode, np.round(episode_reward, decimals=2), np.mean(rewards[-10:])))
                     break
-
-            if len(steps)>100 and np.array(steps[-100:]).mean()==499:
-                  break
+            
+            #if env_name=="CartPole-v1":
+            #  if len(steps)>100 and np.array(steps[-100:]).mean()==499:
+            #        break
+            #else:
+            #   if len(steps)>100 and np.array(steps[-100:]).mean()<65:
+            #        break
 
             R = 0
             for r in episode_rewards[::-1]:
                 R = r + self.gamma*R
             # returns.insert(0,R)
             returns.append(R)
-            avg_return = 0.05*R+0.95*avg_return
+            avg_return = 0.005*R+0.995*avg_return
             # avg_returns.insert(0,avg_return)
             avg_returns.append(avg_return)
             # avg_returns.insert(0,np.mean(np.array(returns)))
             steps.append(step)
             if episode%log_interval==0:
-                print(f"Episode: {episode}, Return: {returns[-1]:.4f}, Average Return: {avg_returns[-1]:.4f}, Steps: {step}, Average loss: {loss/step:.4f}")
+                print(f"Episode: {episode}, Return: {returns[-1]:.4f}, Average Return: {avg_returns[-1]:.4f}, Steps: {step}")# Average loss per episode: {loss/step:.4f}
             episode += 1
 
-        print(f"Episode: {episode}, Return: {returns[-1]:.4f}, Average Return: {avg_returns[-1]:.4f}, Steps: {step}, Average loss per episode: {loss/step:.4f}")
+        print(f"Episode: {episode}, Return: {returns[-1]:.4f}, Average Return: {avg_returns[-1]:.4f}, Steps: {step}")# Average loss per episode: {loss/step:.4f}
 
         if plot:
           plt.plot(returns)
@@ -266,6 +283,16 @@ def train(env_name, hyperparameters):
       #torch.backends.cudnn.benchmark = True
       #torch.backends.cudnn.deterministic = False
 
+  if env_name == "CartPole-v1":
+     best_return = 99.34
+     avg_return_start = 0
+  elif env_name == "Acrobot-v1":
+     best_return = -45
+     avg_return_start = -100
+  else:
+     print("Wrong environment name!")
+     return
+
   hidden_size = hyperparameters["hidden_size"]
   learning_rate = hyperparameters["learning_rate"]
   gamma = hyperparameters["gamma"]
@@ -284,4 +311,6 @@ def train(env_name, hyperparameters):
   if device=='cuda':
     torch.cuda.empty_cache()
 
-  return returns, avg_returns
+  regret = np.sum(best_return*np.ones(len(returns),)-np.array(returns))
+
+  return returns, avg_returns, best_return, regret

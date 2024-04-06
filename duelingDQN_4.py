@@ -22,20 +22,20 @@ import random
 from pa2_utils import train
 
 hyperparameters = {"gamma":0.99,
-                   "hidden_size":256,
+                   "hidden_size":512,
                    "learning_rate":1e-4,
                    "polyak_tau":1e-3,
                    "softmax_tau":0.1,
                    "max_memory_size":10000,
                    "dueling_type":"max",
-                   "batch_size":512,
-                   "total_episodes":10,
+                   "batch_size":1024,
+                   "total_episodes":1500,
                    "log_interval":100,
                    "plot":False
                    }
 
-env_name = "CartPole-v1"
-# env_name = "Acrobot-v1"                                
+# env_name = "CartPole-v1"
+env_name = "Acrobot-v1"                                
 
 
 # env_name = hyperparameter_set['env_name']
@@ -58,6 +58,8 @@ min_length = min(length)
 avg_regret = sum(regrets)/num_runs
 print(f"Average regret : {avg_regret:.4f}")
 print(f"Average regret per episode: {avg_regret/total_episodes:.4f}")
+
+np.savetxt(env_name+'_'+hyperparameters["dueling_type"]+'.csv', soft_return, delimiter=',')
 
 mean_data = np.mean(soft_return, axis=0)
 variance_data = np.var(soft_return, axis=0)
